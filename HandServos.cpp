@@ -27,8 +27,8 @@ void HandServos::setupServos() {
   
   servoT.attach(pinT);
   servoI.attach(pinI);
-  servoM.attach(pinM, 1000, 2000);
-  servoR.attach(pinR, 1000, 2000);
+  servoM.attach(pinM);
+  servoR.attach(pinR);
 }
 
 void HandServos::moveServos(int posT)
