@@ -1,3 +1,5 @@
+// this code is meant fot an adafruit feather ESP32 board
+
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
