@@ -34,11 +34,9 @@ void HandServos::setupServos() {
 void HandServos::moveServos(int posT)
 {  
     servoT.write(posT);
-/*
-    servoI.write(posI);
-    servoM.write(posM);
-    servoR.write(posR);
-*/
+    servoI.write(posT);
+    servoM.write(posT);
+    servoR.write(posT);
     delay(15);
 
 }
