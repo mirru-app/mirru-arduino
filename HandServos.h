@@ -17,7 +17,7 @@ class HandServos
     int posI;
     int posM;
     int posR;
-    void moveServos(int pos);
+    void moveServos();
   private:
     int pinT;
     int pinI;
