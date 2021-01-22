@@ -30,7 +30,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       String rxValueString = pCharacteristic->getValue().c_str();
       Serial.println(rxValueString);
 
-      handServos.moveServos();
+      handServos.moveServos(rxValueString.toInt());
 
       if (rxValueString == "on") { 
         Serial.println("Turning on");

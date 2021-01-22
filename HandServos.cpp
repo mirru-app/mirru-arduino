@@ -27,17 +27,18 @@ void HandServos::setupServos() {
   
   servoT.attach(pinT);
   servoI.attach(pinI);
-  servoM.attach(pinM, 1000, 2000);
-  servoR.attach(pinR, 1000, 2000);
+  servoM.attach(pinM);
+  servoR.attach(pinR);
 }
 
-void HandServos::moveServos()
+void HandServos::moveServos(int posT)
 {  
     servoT.write(posT);
-    servoI.write(posI);
-    servoM.write(posM);
-    servoR.write(posR);
+    servoI.write(posT);
+    servoM.write(posT);
+    servoR.write(posT);
     delay(15);
+
 }
 
 String getValue(String data, char separator, int index)
