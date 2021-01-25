@@ -1,4 +1,5 @@
 // this code is meant for an adafruit feather ESP32 board
+// Gets characteristic values
 
 #include <BLEDevice.h>
 #include <BLEServer.h>
@@ -26,27 +27,27 @@ class MyServerCallbacks: public BLEServerCallbacks {
 class MyCallbacks: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pCharacteristic) {
       std::string rxValue = pCharacteristic->getValue();
-      
       String rxValueString = pCharacteristic->getValue().c_str();
-      Serial.println(rxValueString);
+      handServos.moveServos(rxValueString);
 
-      handServos.moveServos(rxValueString.toInt());
+//      debug
+      //Serial.println(rxValueString);      
+//      if (rxValue.length() > 0) {
+//        for (int i = 0; i < rxValue.length(); i++) {
+//          //Serial.println(rxValue[i]);
+//        }
+//      }
 
-      if (rxValueString == "on") { 
-        Serial.println("Turning on");
-        digitalWrite(13, HIGH);
-      }
-        
-      if (rxValueString == "off") {
-        Serial.println("Turning off");
-        digitalWrite(13, LOW);
-      }
-      
-      if (rxValue.length() > 0) {
-        for (int i = 0; i < rxValue.length(); i++) {
-          Serial.println(rxValue[i]);
-        }
-      }
+      //you can send letter characters if you want
+//      if (rxValueString == "on") { 
+//        Serial.println("Turning on");
+//        digitalWrite(13, HIGH);
+//      }
+//        
+//      if (rxValueString == "off") {
+//        Serial.println("Turning off");
+//        digitalWrite(13, LOW);
+//      }
     }
 };
 

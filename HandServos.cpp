@@ -1,13 +1,15 @@
 #include "Arduino.h"
 #include "HandServos.h"
 
+/*
+T = thumb
+I = index
+M = middle
+R = ring
+*/
+
 HandServos::HandServos()
 { 
-  posT = 0;
-  posI = 0;
-  posM = 0;
-  posR = 0;
-  
   pinT = 32;
   pinI = 33;
   pinM = 14;
@@ -31,28 +33,44 @@ void HandServos::setupServos() {
   servoR.attach(pinR);
 }
 
-void HandServos::moveServos(int posT)
-{  
-    servoT.write(posT);
-    servoI.write(posT);
-    servoM.write(posT);
-    servoR.write(posT);
-    delay(15);
-
-}
-
-String getValue(String data, char separator, int index)
-{
-    int found = 0;
-    int strIndex[] = { 0, -1 };
-    int maxIndex = data.length() - 1;
-
-    for (int i = 0; i <= maxIndex && found <= index; i++) {
-        if (data.charAt(i) == separator || i == maxIndex) {
-            found++;
-            strIndex[0] = strIndex[1] + 1;
-            strIndex[1] = (i == maxIndex) ? i+1 : i;
-        }
+void HandServos::moveServos(String input)
+{ 
+  //parse String
+  //https://gist.github.com/mattfelsen/9467420
+  
+  for (int i = 0; i < input.length(); i++) {
+    // Loop through each character and check if it's a comma
+    if (input.substring(i, i+1) == ",") {
+      // Grab the piece from the last index up to the current position and store it
+      pieces[counter] = input.substring(lastIndex, i);
+      // Update the last position and add 1, so it starts from the next character
+      lastIndex = i + 1;
+      // Increase the position in the array that we store into
+      counter++;
     }
-    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+
+    // If we're at the end of the string (no more commas to stop us)
+    if (i == input.length() - 1) {
+      // Grab the last part of the string from the lastIndex to the end
+      pieces[counter] = input.substring(lastIndex, i+1);
+
+      //reset for next incoming string
+      input = "";
+      counter = 0;
+      lastIndex = 0;
+    }
+  }
+
+//    debug
+    Serial.println("pieces");
+    Serial.println(pieces[0]);
+    Serial.println(pieces[1]);
+    Serial.println(pieces[2]);
+    Serial.println(pieces[3]);
+
+    servoT.write(pieces[0].toInt());
+    servoI.write(pieces[1].toInt());
+    servoM.write(pieces[2].toInt());
+    servoR.write(pieces[3].toInt());
+    delay(15);
 }

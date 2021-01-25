@@ -12,17 +12,25 @@ class HandServos
     Servo servoI;
     Servo servoM;
     Servo servoR;
+    String getValue;
     void setupServos();
-    int posT;
-    int posI;
-    int posM;
-    int posR;
-    void moveServos(int posT);
+    void moveServos(String input);
   private:
     int pinT;
     int pinI;
     int pinM;
     int pinR;
+
+    // Define number of pieces
+    const int numberOfPieces = 4;
+    String pieces[4];
+    String input = "";
+
+    // Keep track of current position in array
+    int counter = 0;
+    
+    // Keep track of the last comma so we know where to start the substring
+    int lastIndex = 0;
 };
 
 #endif
