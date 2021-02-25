@@ -1,20 +1,22 @@
 // this code is meant for an adafruit feather ESP32 board
-// Gets characteristic values
 
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
 #include "HandServos.h"
+#include "MyoSensors.h"
  
 HandServos handServos;
+MyoSensors myoSensors;
+
 bool deviceConnected = false;
 BLECharacteristic *pCharacteristic;
 
 #define SERVICE_UUID           "0000180d-b5a3-f393-e0a9-e50e24dcca9e"
 #define CHARACTERISTIC_UUID_RX "00002a37-b5a3-f393-e0a9-e50e24dcca9e"
 
-class MyServerCallbacks: public BLEServerCallbacks {
+class OnConnectCallback: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
       deviceConnected = true;
       Serial.println("Connected");
@@ -26,30 +28,12 @@ class MyServerCallbacks: public BLEServerCallbacks {
     }
 };
 
-class MyCallbacks: public BLECharacteristicCallbacks {
+class ReceivedDataCallback: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pCharacteristic) {
       std::string rxValue = pCharacteristic->getValue();
       String rxValueString = pCharacteristic->getValue().c_str();
+
       handServos.moveServos(rxValueString);
-
-//      debug
-//      Serial.println(rxValueString);      
-//      if (rxValue.length() > 0) {
-//        for (int i = 0; i < rxValue.length(); i++) {
-//          Serial.println(rxValue[i]);
-//        }
-//      }
-
-      //you can send letter characters if you want
-//      if (rxValueString == "on") { 
-//        Serial.println("Turning on");
-//        digitalWrite(13, HIGH);
-//      }
-//        
-//      if (rxValueString == "off") {
-//        Serial.println("Turning off");
-//        digitalWrite(13, LOW);
-//      }
     }
 };
 
@@ -60,7 +44,7 @@ void setup(void) {
   handServos.setupServos();
   BLEDevice::init("Brunel Hand");
   BLEServer *pServer = BLEDevice::createServer();
-  pServer->setCallbacks(new MyServerCallbacks());
+  pServer->setCallbacks(new OnConnectCallback());
 
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
@@ -69,7 +53,7 @@ void setup(void) {
                                          BLECharacteristic::PROPERTY_WRITE
                                        );
 
-  pCharacteristic->setCallbacks(new MyCallbacks());
+  pCharacteristic->setCallbacks(new ReceivedDataCallback());
   pService->start();
   pServer->getAdvertising()->start();
   
@@ -77,5 +61,5 @@ void setup(void) {
 }
 
 void loop() {
-//loop here
+  myoSensors.readValues();
 }

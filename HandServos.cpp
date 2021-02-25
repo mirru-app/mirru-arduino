@@ -10,10 +10,10 @@ R = ring
 
 HandServos::HandServos()
 { 
-  pinT = 32;
-  pinI = 33;
-  pinM = 14;
-  pinR = 15;
+  pinT = 27;
+  pinI = 32;
+  pinM = 15;
+  pinR = 14;
 }
 
 void HandServos::setupServos() {
