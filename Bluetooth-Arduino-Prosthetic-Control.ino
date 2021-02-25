@@ -5,13 +5,13 @@
 #include <BLEUtils.h>
 #include <BLE2902.h>
 #include "HandServos.h"
-#include "MyoSensors.h"
- 
+#include "MyoSensor.h"
+
 HandServos handServos;
-MyoSensors myoSensors;
+MyoSensor myoSensor(A0);
 
 bool deviceConnected = false;
-BLECharacteristic *pCharacteristic;
+BLECharacteristic *pCharacteristic;       
 
 #define SERVICE_UUID           "0000180d-b5a3-f393-e0a9-e50e24dcca9e"
 #define CHARACTERISTIC_UUID_RX "00002a37-b5a3-f393-e0a9-e50e24dcca9e"
@@ -32,7 +32,6 @@ class ReceivedDataCallback: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pCharacteristic) {
       std::string rxValue = pCharacteristic->getValue();
       String rxValueString = pCharacteristic->getValue().c_str();
-
       handServos.moveServos(rxValueString);
     }
 };
@@ -61,5 +60,5 @@ void setup(void) {
 }
 
 void loop() {
-  myoSensors.readValues();
+  myoSensor.readValues();
 }
