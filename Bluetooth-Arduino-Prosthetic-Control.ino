@@ -34,16 +34,15 @@ class ReceivedDataCallback: public BLECharacteristicCallbacks {
       std::string rxValue = pCharacteristic->getValue();
       String rxValueString = pCharacteristic->getValue().c_str();
       handServos.moveServos(rxValueString);
-      Serial.println(analogRead(A2));
     }
 };
 
 void setup() {
   Serial.begin(115200);
+  handServos.setupServos();
+
   interval = 5;
   previousMillis = 0;
-  
-  handServos.setupServos();
   
   BLEDevice::init("Brunel Hand");
   BLEServer *pServer = BLEDevice::createServer();
@@ -64,8 +63,19 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(analogRead(A2));
-  delay(20);
-  Serial.println(analogRead(A3));
-  delay(20);
+  int myo0 = analogRead(A2);
+  Serial.println(myo0);
+  
+  if (myo0 > 1000) {
+    handServos.decrement();
+  }
+  
+  delay(1000);
+
+  int myo1 = analogRead(A3);
+  Serial.println(myo1);
+
+  if (myo1 > 1000) {
+    handServos.increment();
+  }
 }

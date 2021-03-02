@@ -33,6 +33,29 @@ void HandServos::setupServos() {
   servoR.attach(pinR);
 }
 
+void HandServos::decrement() {
+  pos = servoT.read();
+  for (int i = pos; i >= 0; i -= 1) { // goes from 180 degrees to 0 degrees
+    servoT.write(i);
+    servoI.write(i);
+    servoM.write(i);
+    servoR.write(i); // tell servo to go to position in variable 'pos'
+    delay(15);             // waits 15ms for the servo to reach the position
+  }
+}
+
+void HandServos::increment() {
+  pos = servoT.read();
+  for (int i = pos; i <= 180; i += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    servoT.write(i);
+    servoI.write(i);
+    servoM.write(i);
+    servoR.write(i);
+    delay(15);             // waits 15ms for the servo to reach the position
+  }
+}
+
 void HandServos::moveServos(String input)
 { 
   //parse String

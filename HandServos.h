@@ -14,6 +14,8 @@ class HandServos
     Servo servoR;
     String getValue;
     void setupServos();
+    void decrement();
+    void increment();
     void moveServos(String input);
   private:
     int pinT;
@@ -31,6 +33,8 @@ class HandServos
     
     // Keep track of the last comma so we know where to start the substring
     int lastIndex = 0;
+
+    int pos;
 };
 
 #endif
