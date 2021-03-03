@@ -40,9 +40,7 @@ class ReceivedDataCallback: public BLECharacteristicCallbacks {
 void setup() {
   Serial.begin(115200);
   handServos.setupServos();
-
-  interval = 5;
-  previousMillis = 0;
+  handServos.calibrate();
   
   BLEDevice::init("Brunel Hand");
   BLEServer *pServer = BLEDevice::createServer();
@@ -64,18 +62,18 @@ void setup() {
 
 void loop() {
   int myo0 = analogRead(A2);
-  Serial.println(myo0);
   
-  if (myo0 > 1000) {
+  if (myo0 < 750) {
+    Serial.println("decrement");
     handServos.decrement();
+    // goes from 180upright degrees to 0bent degrees
   }
   
-  delay(1000);
-
   int myo1 = analogRead(A3);
-  Serial.println(myo1);
-
-  if (myo1 > 1000) {
+  
+  if (myo1 < 500) {
+    Serial.println("increment");
     handServos.increment();
+    // goes from 0 bent degrees to 180upright degrees
   }
 }

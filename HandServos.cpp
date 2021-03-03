@@ -34,25 +34,51 @@ void HandServos::setupServos() {
 }
 
 void HandServos::decrement() {
-  pos = servoT.read();
-  for (int i = pos; i >= 0; i -= 1) { // goes from 180 degrees to 0 degrees
-    servoT.write(i);
-    servoI.write(i);
-    servoM.write(i);
-    servoR.write(i); // tell servo to go to position in variable 'pos'
-    delay(15);             // waits 15ms for the servo to reach the position
+  if (lastPos > 0) {
+    int maxPos = lastPos-2;
+    for (int i = lastPos; i >= maxPos; i -= 1) { // goes from 180 degrees to 0bent degrees
+      // in steps of 1 degree
+      Serial.println(i);
+      servoI.write(i);
+      servoM.write(i);
+      servoR.write(i);
+      lastPos = i;
+      delay(15);             // waits 15ms for the servo to reach the position
+      
+    }
+  } else {
+    lastPos = 180;
   }
+  lastPos = servoI.read();
 }
 
 void HandServos::increment() {
-  pos = servoT.read();
-  for (int i = pos; i <= 180; i += 1) { // goes from 0 degrees to 180 degrees
+  if (lastPos < 180) {
+    int maxPos = lastPos+10;
+    for (int i = lastPos; i <= maxPos; i += 1) { // goes from 0bent degrees to 180upright degrees
+      // in steps of 1 degree
+      Serial.println(i);
+      servoI.write(i);
+      servoM.write(i);
+      servoR.write(i);
+      lastPos = i;
+      delay(15);             // waits 15ms for the servo to reach the position
+    }
+  } else {
+    lastPos = 0;
+  }
+  lastPos = servoI.read();
+}
+
+
+void HandServos::calibrate() {
+  int pos = startPos;
+  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
-    servoT.write(i);
-    servoI.write(i);
-    servoM.write(i);
-    servoR.write(i);
-    delay(15);             // waits 15ms for the servo to reach the position
+      servoI.write(pos);
+      servoM.write(pos);
+      servoR.write(pos);
+      delay(2);             // waits 15ms for the servo to reach the position
   }
 }
 

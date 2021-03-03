@@ -15,6 +15,7 @@ class HandServos
     String getValue;
     void setupServos();
     void decrement();
+    void calibrate();
     void increment();
     void moveServos(String input);
   private:
@@ -34,7 +35,12 @@ class HandServos
     // Keep track of the last comma so we know where to start the substring
     int lastIndex = 0;
 
-    int pos;
+    int startPos = 180;
+    int lastPos = startPos;
+    int posI;
+    int posM;
+    int posR;
+    int i;
 };
 
 #endif
