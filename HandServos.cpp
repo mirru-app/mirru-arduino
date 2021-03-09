@@ -33,12 +33,13 @@ void HandServos::setupServos() {
   servoR.attach(pinR);
 }
 
-void HandServos::decrement() {
+void HandServos::closeFingers() {
   if (lastPos > 0) {
     int maxPos = lastPos-2;
     for (int i = lastPos; i >= maxPos; i -= 1) { // goes from 180 degrees to 0bent degrees
       // in steps of 1 degree
       Serial.println(i);
+      servoT.write(i);
       servoI.write(i);
       servoM.write(i);
       servoR.write(i);
@@ -52,34 +53,52 @@ void HandServos::decrement() {
   lastPos = servoI.read();
 }
 
-void HandServos::increment() {
+void HandServos::openThumb() {
+  if (lastPosThumb > 0) {
+    int maxPos = lastPosThumb-20;
+    for (int i = lastPosThumb; i >= maxPos; i -= 1) {
+      Serial.println(i);
+      servoT.write(i);
+      lastPosThumb = i;
+      delay(15);
+    }
+  } else {
+    lastPosThumb = 180;
+  }
+  lastPosThumb = servoT.read();
+}
+
+void HandServos::openFingers() {
   if (lastPos < 180) {
-    int maxPos = lastPos+10;
-    for (int i = lastPos; i <= maxPos; i += 1) { // goes from 0bent degrees to 180upright degrees
+    int maxPos = lastPos+20;
+    for (int i = lastPos; i <= maxPos; i += 1) {
       // in steps of 1 degree
       Serial.println(i);
       servoI.write(i);
       servoM.write(i);
       servoR.write(i);
       lastPos = i;
-      delay(15);             // waits 15ms for the servo to reach the position
+      Serial.println(i);
+      delay(15);
     }
   } else {
     lastPos = 0;
   }
-  lastPos = servoI.read();
+  lastPos = servoM.read();
 }
-
 
 void HandServos::calibrate() {
   int pos = startPos;
   for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
+      servoT.write(pos);
       servoI.write(pos);
       servoM.write(pos);
       servoR.write(pos);
-      delay(2);             // waits 15ms for the servo to reach the position
+      delay(15);             // waits 15ms for the servo to reach the position
   }
+  lastPos = servoI.read();
+  lastPosThumb = servoT.read();
 }
 
 void HandServos::moveServos(String input)
@@ -121,5 +140,30 @@ void HandServos::moveServos(String input)
     servoI.write(pieces[1].toInt());
     servoM.write(pieces[2].toInt());
     servoR.write(pieces[3].toInt());
+    
+    lastPosThumb = servoT.read();
+    lastPos = servoM.read();
     delay(15);
+}
+
+void HandServos::movee(int var) {
+    int i;
+    if (i < servoT.read()) {
+      for (i = lastPos; i > var; i -= 1) { // goes from 180 degrees to 0 degrees
+        servoT.write(i);
+        servoI.write(i);
+        servoM.write(i);
+        servoR.write(i);// tell servo to go to position in variable 'pos'
+        delay(15);             // waits 15ms for the servo to reach the position
+      }
+    } else {
+      for (i = lastPos; i < var; i += 1) { // goes from 180 degrees to 0 degrees
+        servoT.write(i);
+        servoI.write(i);
+        servoM.write(i);
+        servoR.write(i);// tell servo to go to position in variable 'pos'
+        delay(15);             // waits 15ms for the servo to reach the position
+      }
+   }
+   lastPos = servoT.read();
 }

@@ -14,10 +14,13 @@ class HandServos
     Servo servoR;
     String getValue;
     void setupServos();
-    void decrement();
     void calibrate();
-    void increment();
+    void openFingers();
+    void openThumb();
+    void closeFingers();
     void moveServos(String input);
+    void movee(int var);
+    int var;
   private:
     int pinT;
     int pinI;
@@ -36,7 +39,9 @@ class HandServos
     int lastIndex = 0;
 
     int startPos = 180;
+    int startPosThumb = 0;
     int lastPos = startPos;
+    int lastPosThumb = startPosThumb;
     int posI;
     int posM;
     int posR;
