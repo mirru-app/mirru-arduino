@@ -7,6 +7,12 @@
 #include <BLE2902.h>
 #include "HandServos.h"
 #include "SavePattern.h"
+#include "Button2.h"
+
+#define SERVICE_UUID           "0000180d-b5a3-f393-e0a9-e50e24dcca9e"
+#define CHARACTERISTIC_UUID_RX "00002a37-b5a3-f393-e0a9-e50e24dcca9e"
+
+#define BUTTON_PIN  12
 
 HandServos handServos;
 SavePattern savePattern;
@@ -14,17 +20,17 @@ String savedPattern;
 
 bool deviceConnected = false;
 BLECharacteristic *pCharacteristic;
-bool isToggled;
-int buttonState;             // the current reading from the input pin
-int lastButtonState = LOW;   // the previous reading from the input pin
 
-// the following variables are unsigned longs because the time, measured in
-// milliseconds, will quickly become a bigger number than can be stored in an int.
-unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
-unsigned long debounceDelay = 50;
+int buttonState = 0;     // current state of the button
+int lastButtonState = 0; // previous state of the button
+int startPressed = 0;    // the moment the button was pressed
+int endPressed = 0;      // the moment the button was released
+int holdTime = 0;        // how long the button was hold
+int idleTime = 0;        // how long the button was idle
 
-#define SERVICE_UUID           "0000180d-b5a3-f393-e0a9-e50e24dcca9e"
-#define CHARACTERISTIC_UUID_RX "00002a37-b5a3-f393-e0a9-e50e24dcca9e"
+unsigned long previousMillis = 0; 
+
+Button2 button = Button2(BUTTON_PIN);
 
 class OnConnectCallback: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
@@ -54,12 +60,10 @@ class ReceivedDataCallback: public BLECharacteristicCallbacks {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(12, INPUT_PULLUP);
   savePattern.setupSavePattern();
   savedPattern = savePattern.getSavedPattern(SPIFFS, "/savedPattern.txt");
   
   handServos.setupServos();
-  handServos.calibrate();
   
   BLEDevice::init("Brunel Hand");
   BLEServer *pServer = BLEDevice::createServer();
@@ -75,42 +79,39 @@ void setup() {
   pCharacteristic->setCallbacks(new ReceivedDataCallback());
   pService->start();
   pServer->getAdvertising()->start();
+
+  handServos.calibrate();
+  button.setClickHandler(handler);
+  button.setDoubleClickHandler(handler);
+  button.setTripleClickHandler(handler);
+  button.setLongClickHandler(handler);
+  //button.setTapHandler(tap);
   
   Serial.println("Waiting for a client connection to notify...");
 }
 
 void loop() {
-  readButtonPress();
-
-//    if (isToggled) {
-////      Serial.println("ppppp");
-////      handServos.movee(savedPattern);
-//    }
-//    else {
-//      handServos.increment();
-//    }
+  button.loop();
+  buttonReadHold();
 }
 
-void readButtonPress() {
-  int reading = digitalRead(12);
-  
-  if (reading != lastButtonState) {
-    lastDebounceTime = millis();
-  }
-
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    if (reading != buttonState) {
-      buttonState = reading;
-      
-      if (buttonState == HIGH) {
-        handServos.openThumb();  
-        handServos.openFingers();
-        delay(15);
-      }
+void handler(Button2& btn) {
+    Serial.println(btn.isPressed());
+    switch (btn.getClickType()) {
+        case SINGLE_CLICK:
+            Serial.println("single ");
+            break;
+        case DOUBLE_CLICK:
+            //save pose
+            break;
+        case TRIPLE_CLICK:
+            //go to saved pose
+            break;         
     }
-  }
-  
-  lastButtonState = reading;
+}
+
+void saveCurrentPose() {
+ // savePattern.readFile(SPIFFS,  "/savedPattern.txt", (char*)rxValueString.c_str());
 }
 
 void readMyo() {
@@ -119,7 +120,6 @@ void readMyo() {
   if (myo0 < 750) {
     Serial.println("decrement");
     handServos.closeFingers();
-    // goes from 180upright degrees to 0bent degrees
   }
   
   int myo1 = analogRead(A3);
@@ -127,6 +127,39 @@ void readMyo() {
   if (myo1 < 500) {
     Serial.println("increment");
     handServos.openFingers();
-    // goes from 0 bent degrees to 180upright degrees
+  }
+}
+
+void buttonReadHold() {
+  buttonState = digitalRead(BUTTON_PIN);
+
+  if (buttonState != lastButtonState) { 
+     updateState();
+  } else {
+     updateCounter();
+  }
+  
+  lastButtonState = buttonState;
+}
+
+void updateState() {
+  if (buttonState == LOW) {
+      startPressed = millis();
+      idleTime = startPressed - endPressed;
+  } else {
+      endPressed = millis();
+      holdTime = endPressed - startPressed;
+  }
+}
+
+void updateCounter() {
+  if (buttonState == LOW) {
+      holdTime = millis() - startPressed;
+      if (holdTime >= 1100) {
+        handServos.openFingers();
+        handServos.openThumb();
+      }
+  } else {
+      idleTime = millis() - endPressed;
   }
 }
