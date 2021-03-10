@@ -2,12 +2,13 @@
 #define HandServos_h
 
 #include "Arduino.h"
+#include "Ramp.h"
 #include <ESP32Servo.h>
 
 class HandServos
 {
   public:
-    HandServos();
+    HandServos(int);
     Servo servoT;
     Servo servoI;
     Servo servoM;
@@ -19,8 +20,12 @@ class HandServos
     void openThumb();
     void closeFingers();
     void moveServos(String input);
-    void movee(int var);
+    void moveServos2(String input);
     int var;
+    void moveTo(int var);
+    void movee();
+    void setupRamp();
+    int interval;
   private:
     int pinT;
     int pinI;
@@ -34,18 +39,26 @@ class HandServos
 
     // Keep track of current position in array
     int counter = 0;
-    
     // Keep track of the last comma so we know where to start the substring
     int lastIndex = 0;
+    
+    int startPosT = 0;
+    int startPosI = 180;
+    int startPosM = 180;
+    int startPosR = 180;
 
-    int startPos = 180;
-    int startPosThumb = 0;
-    int lastPos = startPos;
-    int lastPosThumb = startPosThumb;
+    int lastPosT = startPosT;
+    int lastPosI = startPosI;
+    int lastPosM = startPosM;
+    int lastPosR = startPosR;
+    
     int posI;
     int posM;
     int posR;
-    int i;
+    
+    int updateInterval;      // interval between updates
+    unsigned long lastUpdate; // last update of position
+    rampInt myRamp = lastPosI;
 };
 
 #endif

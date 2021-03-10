@@ -1,7 +1,8 @@
 #include "SavePattern.h"
 
 SavePattern::SavePattern() 
-{}
+{
+}
 
 void SavePattern::setupSavePattern() {
   if(!SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED)){
@@ -10,8 +11,7 @@ void SavePattern::setupSavePattern() {
   }
 }
 
-String SavePattern::getSavedPattern(fs::FS &fs, const char * path) {
-    String thePattern;
+String SavePattern::readFileString(fs::FS &fs, const char * path) {
     Serial.printf("Reading file: %s\r\n", path);
     File file = fs.open(path);
     if(!file || file.isDirectory()){
@@ -20,9 +20,9 @@ String SavePattern::getSavedPattern(fs::FS &fs, const char * path) {
 
     Serial.println("- read from file:");
     while(file.available()){
-      thePattern = file.readStringUntil('\n');
+      theSavedPattern = file.readStringUntil('\n');
     }
-    return thePattern;
+    return theSavedPattern;
 }
 
 void SavePattern::writeFile(fs::FS &fs, const char * path, const char * message){
@@ -38,4 +38,8 @@ void SavePattern::writeFile(fs::FS &fs, const char * path, const char * message)
     } else {
         Serial.println("- frite failed");
     }
+}
+
+void SavePattern::setLastPattern(String lastPatternString) {
+  lastPattern = lastPatternString;
 }

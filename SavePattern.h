@@ -8,11 +8,13 @@ class SavePattern
 {
   public:
     SavePattern();
-    String getSavedPattern(fs::FS &fs, const char * path);
-    void writeFile(fs::FS &fs, const char * path, const char * message);
     void setupSavePattern();
+    String readFileString(fs::FS &fs, const char * path);
+    void writeFile(fs::FS &fs, const char * path, const char * message);
+    String lastPattern;
+    void setLastPattern(String lastPatternString);
   private:
-    String thePattern;
+    String theSavedPattern;
 };
 
 #endif

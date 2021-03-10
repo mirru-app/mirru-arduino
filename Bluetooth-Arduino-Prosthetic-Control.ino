@@ -14,9 +14,10 @@
 
 #define BUTTON_PIN  12
 
-HandServos handServos;
+HandServos handServos(15);
 SavePattern savePattern;
 String savedPattern;
+String rxValueString;
 
 bool deviceConnected = false;
 BLECharacteristic *pCharacteristic;
@@ -47,21 +48,21 @@ class OnConnectCallback: public BLEServerCallbacks {
 class ReceivedDataCallback: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pCharacteristic) {
         std::string rxValue = pCharacteristic->getValue();
-        String rxValueString = pCharacteristic->getValue().c_str();
+        rxValueString = pCharacteristic->getValue().c_str();
         handServos.moveServos(rxValueString);
   
         int str_len = rxValueString.length() + 1; 
         char * char_array[str_len];
-        String theString = rxValueString;
-        
-        savePattern.writeFile(SPIFFS,  "/savedPattern.txt", (char*)rxValueString.c_str());
+        savePattern.setLastPattern(rxValueString);
+        //(char*)rxValueString.c_str()
     }
 };
 
 void setup() {
   Serial.begin(115200);
   savePattern.setupSavePattern();
-  savedPattern = savePattern.getSavedPattern(SPIFFS, "/savedPattern.txt");
+  savedPattern = savePattern.readFileString(SPIFFS, "/savedPattern.txt");
+  Serial.println(savedPattern);
   
   handServos.setupServos();
   
@@ -85,33 +86,35 @@ void setup() {
   button.setDoubleClickHandler(handler);
   button.setTripleClickHandler(handler);
   button.setLongClickHandler(handler);
-  //button.setTapHandler(tap);
   
   Serial.println("Waiting for a client connection to notify...");
 }
 
 void loop() {
   button.loop();
-  buttonReadHold();
+  //buttonReadHold();
 }
 
 void handler(Button2& btn) {
     Serial.println(btn.isPressed());
     switch (btn.getClickType()) {
-        case SINGLE_CLICK:
-            Serial.println("single ");
-            break;
-        case DOUBLE_CLICK:
-            //save pose
-            break;
-        case TRIPLE_CLICK:
-            //go to saved pose
-            break;         
+      case SINGLE_CLICK:
+          Serial.println("single ");
+          break;
+      case DOUBLE_CLICK:
+          Serial.println("double");
+          savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
+          handServos.moveServos2(savedPattern);
+          Serial.println(savedPattern);
+          break;
+      case TRIPLE_CLICK:
+          //save pose
+          savePattern.writeFile(SPIFFS,  "/savedPattern.txt", (char*)savePattern.lastPattern.c_str());
+          Serial.println("triple");
+          savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
+          Serial.println(savedPattern);
+          break;
     }
-}
-
-void saveCurrentPose() {
- // savePattern.readFile(SPIFFS,  "/savedPattern.txt", (char*)rxValueString.c_str());
 }
 
 void readMyo() {
@@ -156,8 +159,8 @@ void updateCounter() {
   if (buttonState == LOW) {
       holdTime = millis() - startPressed;
       if (holdTime >= 1100) {
-        handServos.openFingers();
-        handServos.openThumb();
+//        handServos.openFingers();
+//        handServos.openThumb();
       }
   } else {
       idleTime = millis() - endPressed;
