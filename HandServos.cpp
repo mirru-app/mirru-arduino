@@ -258,10 +258,10 @@ void HandServos::movee() {
   if((millis() - lastUpdate) > updateInterval)  // time to update
   {
     lastUpdate = millis();
-    servoT.write(myRamp.update());
-    servoI.write(myRamp.update());
-    servoM.write(myRamp.update());
-    servoR.write(myRamp.update());
+    servoT.write(0);
+    servoI.write(0);
+    servoM.write(0);
+    servoR.write(0);
     delay(10);
   }
 }

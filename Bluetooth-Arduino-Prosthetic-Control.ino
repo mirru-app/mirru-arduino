@@ -92,7 +92,9 @@ void setup() {
 
 void loop() {
   button.loop();
-  //buttonReadHold();
+  delay(15);
+  buttonReadHold();
+  delay(15);
 }
 
 void handler(Button2& btn) {
@@ -100,6 +102,7 @@ void handler(Button2& btn) {
     switch (btn.getClickType()) {
       case SINGLE_CLICK:
           Serial.println("single ");
+          handServos.movee();
           break;
       case DOUBLE_CLICK:
           Serial.println("double");
@@ -159,8 +162,8 @@ void updateCounter() {
   if (buttonState == LOW) {
       holdTime = millis() - startPressed;
       if (holdTime >= 1100) {
-//        handServos.openFingers();
-//        handServos.openThumb();
+        handServos.openFingers();
+        handServos.openThumb();
       }
   } else {
       idleTime = millis() - endPressed;
