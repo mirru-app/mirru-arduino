@@ -72,13 +72,10 @@ void HandServos::openThumb() {
 
 void HandServos::openFingers() {
   if (lastPosI < 180) {
-    int maxPos = lastPosI+20;
-    for (int i = lastPosI; i <= maxPos; i += 1) {
+    for (int i = lastPosI; i <= 180; i += 1) {
       // in steps of 1 degree
       Serial.println(i);
       servoI.write(i);
-      servoM.write(i);
-      servoR.write(i);
       lastPosI = i;
       Serial.println(i);
       delay(15);
@@ -86,7 +83,35 @@ void HandServos::openFingers() {
   } else {
     lastPosI = 0;
   }
+
+  if (lastPosM < 180) {
+    for (int i = lastPosM; i <= 180; i += 1) {
+      // in steps of 1 degree
+      Serial.println(i);
+      servoM.write(i);
+      lastPosM = i;
+      Serial.println(i);
+      delay(15);
+    }
+  } else {
+    lastPosM = 0;
+  }
+
+  if (lastPosR < 180) {
+    for (int i = lastPosR; i <= 180; i += 1) {
+      // in steps of 1 degree
+      Serial.println(i);
+      servoR.write(i);
+      lastPosR = i;
+      Serial.println(i);
+      delay(15);
+    }
+  } else {
+    lastPosR = 0;
+  }
   lastPosI = servoI.read();
+  lastPosM = servoM.read();
+  lastPosR = servoR.read();
 }
 
 void HandServos::calibrate() {
@@ -99,8 +124,10 @@ void HandServos::calibrate() {
       servoR.write(pos);
       delay(15);             // waits 15ms for the servo to reach the position
   }
-  lastPosI = servoI.read();
   lastPosT = servoT.read();
+  lastPosI = servoI.read();
+  lastPosM = servoM.read();
+  lastPosR = servoR.read();
 }
 
 void HandServos::moveServos(String input) {
@@ -143,7 +170,9 @@ void HandServos::moveServos(String input) {
     servoR.write(pieces[3].toInt());
     
     lastPosT = servoT.read();
+    lastPosI = servoI.read();
     lastPosM = servoM.read();
+    lastPosR = servoR.read();
     delay(15);
 }
 
@@ -185,10 +214,9 @@ void HandServos::moveServos2(String input) {
      for (int i = lastPosT; i > pieces[0].toInt(); i--) {
         servoT.write(i);
         lastPosT = servoT.read();
-        Serial.println(servoT.read());
         delay(15);
      }
-    } else {
+    } else if (lastPosT > pieces[0].toInt()) {
       for (int i = lastPosT; i < pieces[0].toInt(); i++) {
         servoT.write(i);
         lastPosT = servoT.read();
@@ -202,13 +230,11 @@ void HandServos::moveServos2(String input) {
         servoI.write(i);
         lastPosI = servoI.read();
         delay(15);
-        Serial.println(i);
      }
-    } else {
+    } else if (lastPosI < pieces[1].toInt()) {
       for (int i = lastPosI; i < pieces[1].toInt(); i++) {
         servoI.write(i);
         lastPosI = servoI.read();
-        Serial.println(i);
         delay(15);
       }
     }
@@ -219,49 +245,27 @@ void HandServos::moveServos2(String input) {
         servoM.write(i);
         lastPosM = servoM.read();
         delay(15);
-        Serial.println(i);
      }
-    } else {
+    } else if (lastPosM < pieces[2].toInt()) {
       for (int i = lastPosM; i < pieces[2].toInt(); i++) {
         servoM.write(i);
         lastPosM = servoM.read();
-        Serial.println(i);
         delay(15);
       }
     }
 
     // R
-    if (lastPosR > pieces[1].toInt()) {
+    if (lastPosR > pieces[3].toInt()) {
      for (int i = lastPosR; i > pieces[3].toInt(); i--) {
         servoR.write(i);
         lastPosR = servoR.read();
         delay(15);
-        Serial.println(i);
      }
-    } else {
+    } else if (lastPosR < pieces[3].toInt()) {
       for (int i = lastPosR; i < pieces[3].toInt(); i++) {
         servoR.write(i);
         lastPosR = servoR.read();
-        Serial.println(i);
         delay(15);
       }
     }
-}
-
-void HandServos::moveTo(int var) {
-  myRamp.go(var, 3000);
-  Serial.println("setupRamp");
-  Serial.println(myRamp.getValue());
-}
-
-void HandServos::movee() {
-  if((millis() - lastUpdate) > updateInterval)  // time to update
-  {
-    lastUpdate = millis();
-    servoT.write(0);
-    servoI.write(0);
-    servoM.write(0);
-    servoR.write(0);
-    delay(10);
-  }
 }

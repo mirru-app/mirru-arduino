@@ -22,9 +22,6 @@ class HandServos
     void moveServos(String input);
     void moveServos2(String input);
     int var;
-    void moveTo(int var);
-    void movee();
-    void setupRamp();
     int interval;
   private:
     int pinT;
@@ -52,13 +49,8 @@ class HandServos
     int lastPosM = startPosM;
     int lastPosR = startPosR;
     
-    int posI;
-    int posM;
-    int posR;
-    
     int updateInterval;      // interval between updates
     unsigned long lastUpdate; // last update of position
-    rampInt myRamp = lastPosI;
 };
 
 #endif

@@ -102,10 +102,10 @@ void handler(Button2& btn) {
     switch (btn.getClickType()) {
       case SINGLE_CLICK:
           Serial.println("single ");
-          handServos.movee();
+          //handServos.movee();
           break;
       case DOUBLE_CLICK:
-          Serial.println("double");
+          Serial.println("double load");
           savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
           handServos.moveServos2(savedPattern);
           Serial.println(savedPattern);
@@ -113,7 +113,7 @@ void handler(Button2& btn) {
       case TRIPLE_CLICK:
           //save pose
           savePattern.writeFile(SPIFFS,  "/savedPattern.txt", (char*)savePattern.lastPattern.c_str());
-          Serial.println("triple");
+          Serial.println("triple save");
           savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
           Serial.println(savedPattern);
           break;
@@ -162,8 +162,7 @@ void updateCounter() {
   if (buttonState == LOW) {
       holdTime = millis() - startPressed;
       if (holdTime >= 1100) {
-        handServos.openFingers();
-        handServos.openThumb();
+        handServos.moveServos2("0,180,180,180");
       }
   } else {
       idleTime = millis() - endPressed;
