@@ -209,21 +209,14 @@ void HandServos::moveServos2(String input) {
     Serial.println(pieces[2]);
     Serial.println(pieces[3]);
 
-    // T
-    if (lastPosT > pieces[0].toInt()) {
-     for (int i = lastPosT; i > pieces[0].toInt(); i--) {
-        servoT.write(i);
-        lastPosT = servoT.read();
-        delay(15);
-     }
-    } else if (lastPosT > pieces[0].toInt()) {
+    if (lastPosT < pieces[0].toInt()) {
       for (int i = lastPosT; i < pieces[0].toInt(); i++) {
         servoT.write(i);
         lastPosT = servoT.read();
         delay(15);
       }
     }
-
+    
     // I
     if (lastPosI > pieces[1].toInt()) {
      for (int i = lastPosI; i > pieces[1].toInt(); i--) {
@@ -268,4 +261,12 @@ void HandServos::moveServos2(String input) {
         delay(15);
       }
     }
+
+    if (lastPosT > pieces[0].toInt()) {
+     for (int i = lastPosT; i > pieces[0].toInt(); i--) {
+        servoT.write(i);
+        lastPosT = servoT.read();
+        delay(15);
+     }
+    } 
 }
