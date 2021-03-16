@@ -19,7 +19,7 @@ class HandServos
     void openFingers();
     void openThumb();
     void closeFingers();
-    void moveServos(String input);
+    void moveServos(String input, boolean freezeThumb);
     void moveServos2(String input);
     int var;
     int interval;

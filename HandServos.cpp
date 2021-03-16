@@ -130,7 +130,7 @@ void HandServos::calibrate() {
   lastPosR = servoR.read();
 }
 
-void HandServos::moveServos(String input) {
+void HandServos::moveServos(String input, boolean freezeThumb) {
   //parse String
   //https://gist.github.com/mattfelsen/9467420
   
@@ -164,11 +164,14 @@ void HandServos::moveServos(String input) {
     Serial.println(pieces[2]);
     Serial.println(pieces[3]);
 
-    servoT.write(pieces[0].toInt());
+    if (!freezeThumb) {
+       servoT.write(pieces[0].toInt());
+    }
+
     servoI.write(pieces[1].toInt());
     servoM.write(pieces[2].toInt());
     servoR.write(pieces[3].toInt());
-    
+
     lastPosT = servoT.read();
     lastPosI = servoI.read();
     lastPosM = servoM.read();

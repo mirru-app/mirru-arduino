@@ -18,6 +18,7 @@ HandServos handServos(15);
 SavePattern savePattern;
 String savedPattern;
 String rxValueString;
+bool freezeThumb = false;
 
 bool deviceConnected = false;
 BLECharacteristic *pCharacteristic;
@@ -49,7 +50,7 @@ class ReceivedDataCallback: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pCharacteristic) {
         std::string rxValue = pCharacteristic->getValue();
         rxValueString = pCharacteristic->getValue().c_str();
-        handServos.moveServos(rxValueString);
+        handServos.moveServos(rxValueString, freezeThumb);
   
         int str_len = rxValueString.length() + 1; 
         char * char_array[str_len];
@@ -101,8 +102,7 @@ void handler(Button2& btn) {
     Serial.println(btn.isPressed());
     switch (btn.getClickType()) {
       case SINGLE_CLICK:
-          Serial.println("single ");
-          //handServos.movee();
+          freezeThumb = !freezeThumb;
           break;
       case DOUBLE_CLICK:
           Serial.println("double load");
