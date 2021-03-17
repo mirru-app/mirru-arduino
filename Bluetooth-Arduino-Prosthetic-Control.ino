@@ -67,7 +67,7 @@ void setup() {
   
   handServos.setupServos();
   
-  BLEDevice::init("Brunel Hand");
+  BLEDevice::init("Brunel Hand Right");
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new OnConnectCallback());
 
@@ -162,7 +162,7 @@ void updateCounter() {
   if (buttonState == LOW) {
       holdTime = millis() - startPressed;
       if (holdTime >= 1100) {
-        handServos.moveServos2("0,180,180,180");
+        handServos.openFingers();
       }
   } else {
       idleTime = millis() - endPressed;

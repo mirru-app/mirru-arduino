@@ -70,50 +70,6 @@ void HandServos::openThumb() {
   lastPosT = servoT.read();
 }
 
-void HandServos::openFingers() {
-  if (lastPosI < 180) {
-    for (int i = lastPosI; i <= 180; i += 1) {
-      // in steps of 1 degree
-      Serial.println(i);
-      servoI.write(i);
-      lastPosI = i;
-      Serial.println(i);
-      delay(15);
-    }
-  } else {
-    lastPosI = 0;
-  }
-
-  if (lastPosM < 180) {
-    for (int i = lastPosM; i <= 180; i += 1) {
-      // in steps of 1 degree
-      Serial.println(i);
-      servoM.write(i);
-      lastPosM = i;
-      Serial.println(i);
-      delay(15);
-    }
-  } else {
-    lastPosM = 0;
-  }
-
-  if (lastPosR < 180) {
-    for (int i = lastPosR; i <= 180; i += 1) {
-      // in steps of 1 degree
-      Serial.println(i);
-      servoR.write(i);
-      lastPosR = i;
-      Serial.println(i);
-      delay(15);
-    }
-  } else {
-    lastPosR = 0;
-  }
-  lastPosI = servoI.read();
-  lastPosM = servoM.read();
-  lastPosR = servoR.read();
-}
-
 void HandServos::calibrate() {
   int pos = startPosI;
   for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
@@ -272,4 +228,45 @@ void HandServos::moveServos2(String input) {
         delay(15);
      }
     } 
+}
+
+void HandServos::openFingers() {
+    Serial.println("opening");
+    int angleT = servoT.read();
+    int angleI = servoI.read();
+    int angleM = servoM.read();
+    int angleR = servoR.read();
+    
+    int angleStep = 10;
+
+    angleT = angleT - angleStep;
+    angleI = angleI + angleStep;
+    angleM = angleM + angleStep;
+    angleR = angleR + angleStep;
+  
+    if (angleT <= 0) {
+      angleT = 0;
+    }
+    
+    if (angleI >= 180) {
+      angleI = 180;
+    }
+
+    if (angleM >= 180) {
+      angleM = 180;
+    }
+
+    if (angleR >= 180) {
+      angleR = 180;
+    }
+
+    servoT.write(angleT); // move the servo to desired angle
+    servoI.write(angleI); // move the servo to desired angle
+    servoM.write(angleM); // move the servo to desired angle
+    servoR.write(angleR); // move the servo to desired angle
+
+    lastPosT = servoT.read();
+    lastPosI = servoI.read();
+    lastPosM = servoM.read();
+    lastPosR = servoR.read();
 }
