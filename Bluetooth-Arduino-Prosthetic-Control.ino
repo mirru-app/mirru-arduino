@@ -67,7 +67,7 @@ void setup() {
   
   handServos.setupServos();
   
-  BLEDevice::init("Brunel Hand Right");
+  BLEDevice::init("Brunel Hand");
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new OnConnectCallback());
 
