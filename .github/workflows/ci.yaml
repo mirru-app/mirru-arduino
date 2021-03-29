@@ -14,5 +14,6 @@ jobs:
     steps:
     - name: Install Arduino CLI
       uses: arduino/setup-arduino-cli@v1.1.1
+    - uses: actions/checkout@v2
     - name: Build sketch
       run: make all
