@@ -8,6 +8,10 @@ on:
     paths-ignore:
     - '**/*.md'
 
+# See the blog post here for some additional examples with building
+# Arduino on GitHub actions (e.g. building for multiple platforms):
+# https://blog.arduino.cc/2019/11/14/arduino-on-github-actions/
+
 jobs:
   build:
     runs-on: ubuntu-latest
