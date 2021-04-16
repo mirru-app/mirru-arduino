@@ -25,4 +25,4 @@ For deploying the sketch please see the additional info on the [arduino-cli site
 
 ### Arduino IDE
 
-TODO
+This can also used with the IDE. Just open the sketch in the arduino IDE.
