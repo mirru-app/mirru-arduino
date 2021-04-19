@@ -2,7 +2,6 @@
 #define HandServos_h
 
 #include "Arduino.h"
-#include "Ramp.h"
 #include <ESP32Servo.h>
 
 class HandServos

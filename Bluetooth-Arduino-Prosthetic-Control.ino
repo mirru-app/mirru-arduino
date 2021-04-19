@@ -13,6 +13,7 @@
 #define CHARACTERISTIC_UUID_RX "00002a37-b5a3-f393-e0a9-e50e24dcca9e"
 
 #define BUTTON_PIN  12
+#define LED_PIN A0
 
 HandServos handServos(15);
 SavePattern savePattern;
@@ -61,6 +62,9 @@ class ReceivedDataCallback: public BLECharacteristicCallbacks {
 
 void setup() {
   Serial.begin(115200);
+  pinMode(LED_PIN, OUTPUT);
+  digitalWrite(LED_PIN, LOW);
+
   savePattern.setupSavePattern();
   savedPattern = savePattern.readFileString(SPIFFS, "/savedPattern.txt");
   Serial.println(savedPattern);
@@ -80,14 +84,18 @@ void setup() {
 
   pCharacteristic->setCallbacks(new ReceivedDataCallback());
   pService->start();
+  //https://github.com/nkolban/esp32-snippets/blob/master/cpp_utils/tests/BLETests/Arduino/BLE_uart/BLE_uart.ino
+  pServer->getAdvertising()->addServiceUUID(pService->getUUID());
   pServer->getAdvertising()->start();
 
   handServos.calibrate();
   button.setClickHandler(handler);
   button.setDoubleClickHandler(handler);
   button.setTripleClickHandler(handler);
-  button.setLongClickHandler(handler);
-  
+  button.setDoubleClickTime(500);
+  button.setLongClickTime(2000);
+  button.setLongClickDetectedHandler(longClick);
+
   Serial.println("Waiting for a client connection to notify...");
 }
 
@@ -99,41 +107,49 @@ void loop() {
 }
 
 void handler(Button2& btn) {
-    Serial.println(btn.isPressed());
     switch (btn.getClickType()) {
       case SINGLE_CLICK:
-          freezeThumb = !freezeThumb;
+          freezeThumbButton();
           break;
       case DOUBLE_CLICK:
-          Serial.println("double load");
-          savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
-          handServos.moveServos2(savedPattern);
-          Serial.println(savedPattern);
+          load();
           break;
       case TRIPLE_CLICK:
-          //save pose
-          savePattern.writeFile(SPIFFS,  "/savedPattern.txt", (char*)savePattern.lastPattern.c_str());
-          Serial.println("triple save");
-          savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
-          Serial.println(savedPattern);
+          save();
           break;
     }
 }
 
-void readMyo() {
-  int myo0 = analogRead(A2);
-  
-  if (myo0 < 750) {
-    Serial.println("decrement");
-    handServos.closeFingers();
+void freezeThumbButton() {
+  Serial.println("single");
+  freezeThumb = !freezeThumb;
+  if (freezeThumb) {
+      Serial.println("on");
+      digitalWrite(LED_PIN, 1);
+      delay(5);
+  } else {
+      digitalWrite(LED_PIN, LOW);    // turn the LED off by making the voltage LOW
+      Serial.println("off");
+      delay(5);  
   }
-  
-  int myo1 = analogRead(A3);
-  
-  if (myo1 < 500) {
-    Serial.println("increment");
-    handServos.openFingers();
-  }
+}
+
+void load() {
+  Serial.println("double load");
+  savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
+  handServos.moveServos2(savedPattern);
+  Serial.println(savedPattern);
+}
+
+void save() {
+  savePattern.writeFile(SPIFFS,  "/savedPattern.txt", (char*)savePattern.lastPattern.c_str());
+  Serial.println("triple save");
+  savedPattern = savePattern.readFileString(SPIFFS,  "/savedPattern.txt");
+  Serial.println(savedPattern);
+}
+
+void longClick(Button2& btn) {
+  Serial.println("long press");
 }
 
 void buttonReadHold() {
