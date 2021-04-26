@@ -1,7 +1,7 @@
-This Arduino sketch was made to be used in conjunction with the (Mirru Android App)[https://github.com/mirru-app/mirru-android]
+This Arduino sketch was made to be used in conjunction with the [Mirru Android App](https://github.com/mirru-app/mirru-android)
 
 # For Users
-Want to print and assemble your own hand? Visit our (guide)[https://github.com/mirru-app/mirru-arduino/wiki]
+Want to print and assemble your own hand? Visit our [guide](https://github.com/mirru-app/mirru-arduino/wiki)
 
 # For Development
 
