@@ -1,5 +1,5 @@
-# Bluetooth-Arduino-Prosthetic-Control
-This sketch is to be used in conjunction with the (Mirru Android App)[https://github.com/mirru-app/mirru-android]
+# Mirru Arduino Sketch
+This sketch was made to be used in conjunction with the (Mirru Android App)[https://github.com/mirru-app/mirru-android]
 
 # For Users
 Want to print and assemble your own hand? Visit our (guide)[https://github.com/mirru-app/mirru-arduino/wiki]
