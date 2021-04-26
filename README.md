@@ -1,5 +1,10 @@
 # Bluetooth-Arduino-Prosthetic-Control
-This sketch is to be used in conjunction with Mediapipe Prosthetic Hand Controller
+This sketch is to be used in conjunction with the (Mirru Android App)[https://github.com/mirru-app/mirru-android]
+
+# For Users
+Want to print and assemble your own hand? Visit our (guide)[https://github.com/mirru-app/mirru-arduino/wiki]
+
+# For Development
 
 ## Supported hardware
 
